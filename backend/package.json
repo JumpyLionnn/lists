@@ -6,10 +6,11 @@
     "start": "node dist/index.js",
     "build": "tsc --noEmit && npm run build:base -- --minify",
     "build:dev": "tsc --noEmit && npm run build:base -- --sourcemap",
-    "build:base": "esbuild src/index.ts --outfile=dist/index.js --format=cjs --bundle --platform=node --target=node18.12 --external:sequelize",
+    "build:base": "esbuild src/index.ts --outfile=dist/index.js --format=cjs --bundle --platform=node --target=node18.12 --external:sequelize --external:bcrypt",
     "watch": "nodemon dist/index.ts -e ts"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.15",
     "@types/node": "^18.11.18",
@@ -18,6 +19,10 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-errors": "^3.0.0",
+    "ajv-formats": "^2.1.1",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

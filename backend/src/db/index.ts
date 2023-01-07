@@ -1,5 +1,6 @@
 import assert from "assert";
 import { Sequelize } from "sequelize";
+import { User, initUserModel } from "./models/user";
 
 
 let sequelize: Sequelize | null = null;
@@ -35,7 +36,9 @@ export async function init(): Promise<void> {
 
     console.info("Initalizing models...");
     try {
+        initUserModel(sequelize);
 
+        await User.sync({ alter: true });
         console.info("Models initialized successfully.");
     }
     catch (error) {
@@ -43,4 +46,7 @@ export async function init(): Promise<void> {
     }
 }
 
-export { sequelize };
+export {
+    sequelize,
+    User
+};
