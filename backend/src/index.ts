@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-
+import { init as initLogger } from "./logging";
 
 async function main(){
     console.info("Starting the server.");
@@ -18,4 +18,9 @@ async function main(){
     });
 }
 
+function initCore(){
+    initLogger();
+}
+
+initCore();
 main();
