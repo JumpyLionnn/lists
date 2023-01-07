@@ -6,7 +6,7 @@
     "start": "node dist/index.js",
     "build": "tsc --noEmit && npm run build:base -- --minify",
     "build:dev": "tsc --noEmit && npm run build:base -- --sourcemap",
-    "build:base": "esbuild src/index.ts --outfile=dist/index.js --format=cjs --bundle --platform=node --target=node18.12",
+    "build:base": "esbuild src/index.ts --outfile=dist/index.js --format=cjs --bundle --platform=node --target=node18.12 --external:sequelize",
     "watch": "nodemon -e ts --exec \"npm run build:dev && node dist/index.js --enable-source-maps\""
   },
   "devDependencies": {
@@ -19,7 +19,10 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.28.0",
     "winston": "^3.8.2"
   }
 }
