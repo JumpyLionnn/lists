@@ -1,0 +1,13 @@
+{
+  "name": "lists",
+  "description": "a lists application",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JumpyLionnn/lists.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JumpyLionnn/lists/issues"
+  },
+  "homepage": "https://github.com/JumpyLionnn/lists#readme"
+}
