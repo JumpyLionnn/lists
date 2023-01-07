@@ -1,7 +1,7 @@
 <script lang="ts">
+    import * as api from '$lib/api';
     async function get(){
-        const response = await fetch("http://localhost:3000/get");
-        
+        const response = await api.get("get", {query: {"test": "1", "test2": "21"}});
         if(response.ok){
             return response.text();
         }
@@ -13,7 +13,7 @@
 
 <h1>Welcome to SvelteKit</h1>
 {#await serverResponse}
-	<p>waiting for the server to respond...r</p>
+	<p>waiting for the server to respond...</p>
 {:then text}
 	<p>{text}</p>
 {:catch error}
