@@ -7,7 +7,7 @@
     "build": "tsc --noEmit && npm run build:base -- --minify",
     "build:dev": "tsc --noEmit && npm run build:base -- --sourcemap",
     "build:base": "esbuild src/index.ts --outfile=dist/index.js --format=cjs --bundle --platform=node --target=node18.12 --external:sequelize",
-    "watch": "nodemon -e ts --exec \"npm run build:dev && node dist/index.js --enable-source-maps\""
+    "watch": "nodemon dist/index.ts -e ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
