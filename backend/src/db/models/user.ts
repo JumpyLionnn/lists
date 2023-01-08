@@ -11,15 +11,13 @@ export function initUserModel(sequelize: Sequelize): void {
     User.init({
         email: {
             allowNull: false,
-            type: DataTypes.STRING(50),
-            unique: true
+            type: DataTypes.STRING(50)
         },
         id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
-            type: DataTypes.INTEGER,
-            unique: true
+            type: DataTypes.INTEGER
         },
         password: {
             allowNull: false,
@@ -32,7 +30,17 @@ export function initUserModel(sequelize: Sequelize): void {
     },
     {
         deletedAt: false,
+        indexes: [
+            {
+                unique: true, 
+                fields: ['email']
+            },
+            {
+                unique: true, 
+                fields: ["id"]
+            }
+        ],
         sequelize: sequelize,
-        tableName: "users"
+        tableName: "users",
     });
 }
