@@ -1,4 +1,5 @@
 import * as winston from "winston";
+import { Request, Response } from "express";
 
 export function init(){
 
@@ -54,4 +55,11 @@ export function init(){
 
     // used for errors
     console.error = logger.error.bind(logger);
+}
+
+export function createRequestLogger(){
+    return (req: Request, res: Response, next: (err?: any) => any) => {
+        console.debug(`${req.method} ${req.originalUrl} with ${req.protocol} protocol.`);
+        next();
+    };
 }

@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
-import { init as initLogger } from "./logging";
+import { createRequestLogger, init as initLogger } from "./logging";
 import { init as initDatabase } from "./db";
 import { setupAuthRoutes } from './routes/auth';
 import { authRequired, init as initAuthProtector } from "middlewares/auth";
@@ -14,6 +14,7 @@ async function main(){
     
     assert(process.env.FRONTEND, "Please provide the frontend url in the .env file.");
     app.use(cors({credentials: true, origin: process.env.FRONTEND!}));
+    app.use(createRequestLogger());
     app.use(express.json());
     app.use(cookieParser());
 
