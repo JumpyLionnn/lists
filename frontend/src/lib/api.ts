@@ -30,7 +30,8 @@ async function get(path: string, options?: GetOptions){
     const url = baseUrl + path + getQueryString(options?.query);
     return fetch(url, {
         method: "GET",
-        mode: "cors"
+        mode: "cors",
+        credentials: "include"
     });
 }
 
@@ -39,6 +40,7 @@ async function post(path: string, options?: PostOptions){
     return fetch(url, {
         method: "POST",
         mode: "cors",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json"
         },
@@ -46,11 +48,18 @@ async function post(path: string, options?: PostOptions){
     });
 }
 
+const { loggedIn } = await (await get("check-auth")).json();
+
+function isLoggedIn(){
+    return loggedIn;
+}
+
 
 
 export {
     get,
-    post
+    post,
+    isLoggedIn
 };
 
 export type { 

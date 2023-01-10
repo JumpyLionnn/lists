@@ -1,28 +1,22 @@
 <script lang="ts">
     import * as api from "$lib/api";
-	import { authForbidden } from "$lib/guard";
+	import { goto } from '$app/navigation';
+    import { authForbidden } from "$lib/guard";
     authForbidden();
 
-    let username: string = "";
     let email: string = "";
     let password: string = "";
-    let confirmPassword: string = "";
 
     let error: string | null = null;
 
     let submitDisabled = false;
 
-    async function signup(){
+    async function login(){
         error = null;
-        if(password !== confirmPassword){
-            error = "Password and confirm password do not match. Please try again.";
-            return;
-        }
-
         submitDisabled = true;
-        const signupPromise = api.post("signup", {
+
+        const signupPromise = api.post("login", {
             body: {
-                username: username,
                 email: email,
                 password: password
             }
@@ -31,7 +25,8 @@
         signupPromise.then(async (response) => {
             if(response.ok){
                 submitDisabled = false;
-                console.log("Signup success.");
+                await api.get("secure");
+                goto("/");
             }
             else{
                 const data = await response.json();
@@ -55,18 +50,16 @@
 </style>
 
 <div>
-    <h2>Signup</h2>
+    <h2>Login</h2>
     <div id="form">
-        <input type="text" placeholder="username" bind:value={username}>
         <input type="email" placeholder="email" bind:value={email}>
         <input type="password" placeholder="password" bind:value={password}>
-        <input type="password" placeholder="confirm password" bind:value={confirmPassword}>
         {#if error !== null}
             <div class="error">{error}</div>
         {/if}
-        <button on:click={signup} disabled={submitDisabled}>signup</button>
+        <button on:click={login} disabled={submitDisabled}>login</button>
         <p>
-            Already have an account? <a href="/login">Login here!</a>
+            Don't have an account? <a href="/signup">Signup here!</a>
         </p>
     </div>
     

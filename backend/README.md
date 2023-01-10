@@ -9,6 +9,8 @@ DATABASE_PORT=3306
 DATABASE_PASSWORD=123456Aa@
 DATABASE_USERNAME=appuser
 DATABASE_NAME=lists
+PASSWORD_JWT_SECRET=aRandomSecretString
+FRONTEND=http://localhost:port
 ```
 
 Build the files, start the db and start the server. **Note: does not watch for updating files!**
