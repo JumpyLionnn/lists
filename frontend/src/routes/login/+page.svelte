@@ -15,25 +15,16 @@
         error = null;
         submitDisabled = true;
 
-        const signupPromise = api.post("login", {
-            body: {
-                email: email,
-                password: password
-            }
-        });
+        const response = await api.login(email, password);
+        submitDisabled = false;
 
-        signupPromise.then(async (response) => {
-            if(response.ok){
-                submitDisabled = false;
-                await api.get("secure");
-                goto("/");
-            }
-            else{
-                const data = await response.json();
-                submitDisabled = false;
-                error = data.error ?? null;
-            }
-        });
+        if(response.success){
+            await api.get("secure");
+            goto("/");
+        }
+        else{
+            error = response.error ?? null;
+        }
     }
 </script>
 

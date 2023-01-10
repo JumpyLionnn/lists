@@ -1,13 +1,13 @@
 <script lang="ts">
-    import * as api from "$lib/api";
-
+    import {loggedIn, logout} from "$lib/api";
 </script>
 
 
 
 <h1>Home</h1>
-{#if api.isLoggedIn()}
+{#if $loggedIn}
     <span>Welcome to lists!</span>
+    <button on:click={logout}>Logout</button>
 {:else}
     <a href="/signup">signup</a>
     <a href="/login">login</a>

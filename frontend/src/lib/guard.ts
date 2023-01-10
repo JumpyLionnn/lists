@@ -1,15 +1,16 @@
 import { goto } from "$app/navigation";
+import {get as getStore} from "svelte/store";
 import * as api from "$lib/api";
 
 export function authRequired(){
-    if(!api.isLoggedIn()){
+    if(!getStore(api.loggedIn)){
         goto("/login");
     }
 }
 
 
 export function authForbidden(){
-    if(api.isLoggedIn()){
+    if(getStore(api.loggedIn)){
         goto("/");
     }
 }
