@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Button, { Label } from "@smui/button";
+    import Textfield from "@smui/textfield";
     import * as api from "$lib/api";
 	import { goto } from '$app/navigation';
     import { authForbidden } from "$lib/guard";
@@ -28,30 +30,36 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="postcss">
     .error{
         color: crimson;
     }
-
-    #form{
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
-    }
 </style>
 
-<div>
-    <h2>Login</h2>
-    <div id="form">
-        <input type="email" placeholder="email" bind:value={email}>
-        <input type="password" placeholder="password" bind:value={password}>
+<div class="flex flex-col justify-center items-center h-full gap-2">
+    <h2 class="text-4xl">Login</h2>
+    <div class="flex flex-col gap-3">
+        <Textfield variant="filled" type="email" bind:value={email} label="Email">
+            
+        </Textfield>
+
+        <Textfield variant="filled" type="password" bind:value={password} label="Password">
+            
+        </Textfield>
         {#if error !== null}
             <div class="error">{error}</div>
         {/if}
-        <button on:click={login} disabled={submitDisabled}>login</button>
-        <p>
-            Don't have an account? <a href="/signup">Signup here!</a>
-        </p>
+        <div class="flex flex-col items-center">
+            <Button on:click={login} disabled={submitDisabled} variant="raised" class="px-8">
+                <Label>
+                    login
+                </Label>
+            </Button>
+            <p>
+                Don't have an account? <a href="/signup">Signup here!</a>
+            </p>
+        </div>
+        
     </div>
     
 </div>

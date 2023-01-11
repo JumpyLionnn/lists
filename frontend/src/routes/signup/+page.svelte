@@ -1,6 +1,9 @@
 <script lang="ts">
+    import Button, { Label } from "@smui/button";
+    import Textfield from "@smui/textfield";
     import * as api from "$lib/api";
 	import { authForbidden } from "$lib/guard";
+	import { goto } from "$app/navigation";
     authForbidden();
 
     let username: string = "";
@@ -31,7 +34,7 @@
         signupPromise.then(async (response) => {
             if(response.ok){
                 submitDisabled = false;
-                console.log("Signup success.");
+                goto("login");
             }
             else{
                 const data = await response.json();
@@ -42,19 +45,47 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="postcss">
     .error{
         color: crimson;
     }
-
-    #form{
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
-    }
 </style>
 
-<div>
+<div class="flex flex-col justify-center items-center h-full gap-2">
+    <h2 class="text-4xl">Signup</h2>
+    <form class="flex flex-col gap-3" autocomplete="off" autosave="off">
+        <Textfield variant="filled" type="text" bind:value={username} label="Username">
+            
+        </Textfield>
+        <Textfield variant="filled" type="email" bind:value={email} label="Email"  autocomplete="off" autosave="off">
+            
+        </Textfield>
+
+        <Textfield variant="filled" type="password" bind:value={password} label="Password">
+            
+        </Textfield>
+        <Textfield variant="filled" type="password" bind:value={confirmPassword} label="Confirm password">
+            
+        </Textfield>
+        {#if error !== null}
+            <div class="error">{error}</div>
+        {/if}
+        <div class="flex flex-col items-center">
+            <Button on:click={signup} disabled={submitDisabled} variant="raised" class="px-8">
+                <Label>
+                    signup
+                </Label>
+            </Button>
+            <p>
+                Already have an account? <a href="/login">Login here!</a>
+            </p>
+        </div>
+        
+    </form>
+    
+</div>
+
+<!-- <div>
     <h2>Signup</h2>
     <div id="form">
         <input type="text" placeholder="username" bind:value={username}>
@@ -70,4 +101,4 @@
         </p>
     </div>
     
-</div>
+</div> -->
