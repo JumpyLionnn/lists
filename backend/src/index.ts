@@ -4,9 +4,9 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import { createRequestLogger, init as initLogger } from "./logging";
 import { init as initDatabase } from "./db";
-import { setupAuthRoutes } from './routes/auth';
 import { authRequired, init as initAuthProtector } from "middlewares/auth";
 import assert from 'assert';
+import { setupRoutes } from './routes/index';
 
 async function main(){
     console.info("Starting the server.");
@@ -27,7 +27,7 @@ async function main(){
         res.send("You made it into the secure route");
     });
 
-    app.use("/", setupAuthRoutes());
+    app.use("/", setupRoutes());
 
     console.info("Routes have been created successfully.");
     

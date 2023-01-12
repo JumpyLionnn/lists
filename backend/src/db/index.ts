@@ -1,6 +1,7 @@
 import assert from "assert";
 import { Sequelize } from "sequelize";
 import { User, initUserModel } from "./models/user";
+import { List, initListModel } from './models/list';
 
 
 let sequelize: Sequelize | null = null;
@@ -37,8 +38,21 @@ export async function init(): Promise<void> {
     console.info("Initalizing models...");
     try {
         initUserModel(sequelize);
+        initListModel(sequelize);
+
+
+        User.hasMany(List, {
+            sourceKey: "id",
+            foreignKey: "creatorId"
+        });
+
+        List.belongsTo(User, {
+            as: "Creator",
+            foreignKey: "creatorId"
+        });
 
         await User.sync({ alter: true });
+        await List.sync({ alter: true });
         console.info("Models initialized successfully.");
     }
     catch (error) {
@@ -48,5 +62,6 @@ export async function init(): Promise<void> {
 
 export {
     sequelize,
-    User
+    User,
+    List
 };
