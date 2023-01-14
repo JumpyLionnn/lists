@@ -4,7 +4,7 @@ import { writable, type Writable, get as getStore } from "svelte/store";
 const baseUrl = env.PUBLIC_SERVER_URL + (env.PUBLIC_SERVER_URL.endsWith("/") ? "" : "/");
 
 interface QueryParams{
-    [key: string]: string;
+    [key: string]: string | number;
 }
 
 interface GetOptions{
@@ -17,7 +17,15 @@ interface PostOptions{
 }
 
 function getQueryString(queryParams?: QueryParams){
-    const query = new URLSearchParams(queryParams ?? {});
+    if(!queryParams){
+        return "";
+    }
+    
+    const stringifiedParams: {[key: string]: string} = {};
+    Object.keys(queryParams).forEach(function(key) {
+        stringifiedParams[key] = queryParams[key].toString();
+    });
+    const query = new URLSearchParams(stringifiedParams);
     const queryString = query.toString();
     if(queryString.length === 0){
         return "";

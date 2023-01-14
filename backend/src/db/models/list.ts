@@ -1,5 +1,6 @@
-import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, CreationOptional, DataTypes, ForeignKey, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
+import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, CreationOptional, DataTypes, ForeignKey, HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasManySetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
 import { User } from "./user";
+import { ListItem } from './listItem';
 
 export class List extends Model<InferAttributes<List>, InferCreationAttributes<List>> {
     declare public id: CreationOptional<number>;
@@ -14,6 +15,19 @@ export class List extends Model<InferAttributes<List>, InferCreationAttributes<L
     declare getCreator: BelongsToGetAssociationMixin<User>;
     declare setCreator: BelongsToSetAssociationMixin<User, User["id"]>;
     declare createCreator: BelongsToCreateAssociationMixin<User>;
+
+    declare getItems: HasManyGetAssociationsMixin<ListItem>;
+    declare addItem: HasManyAddAssociationMixin<ListItem, number>;
+    declare addItems: HasManyAddAssociationsMixin<ListItem, number>;
+    declare setItems: HasManySetAssociationsMixin<ListItem, number>;
+    declare removeItem: HasManyRemoveAssociationMixin<ListItem, number>;
+    declare removeItems: HasManyRemoveAssociationsMixin<ListItem, number>;
+    declare hasItem: HasManyHasAssociationMixin<ListItem, number>;
+    declare hasItems: HasManyHasAssociationsMixin<ListItem, number>;
+    declare countItems: HasManyCountAssociationsMixin;
+    declare createItem: HasManyCreateAssociationMixin<ListItem, 'listId'>;
+
+    declare items?: NonAttribute<List[]>;
 }
 
 export function initListModel(sequelize: Sequelize): void {

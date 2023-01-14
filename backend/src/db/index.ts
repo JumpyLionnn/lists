@@ -2,6 +2,7 @@ import assert from "assert";
 import { Sequelize } from "sequelize";
 import { User, initUserModel } from "./models/user";
 import { List, initListModel } from './models/list';
+import { ListItem, initListItemModel } from "./models/listItem";
 
 
 let sequelize: Sequelize | null = null;
@@ -39,7 +40,7 @@ export async function init(): Promise<void> {
     try {
         initUserModel(sequelize);
         initListModel(sequelize);
-
+        initListItemModel(sequelize);
 
         User.hasMany(List, {
             sourceKey: "id",
@@ -51,8 +52,20 @@ export async function init(): Promise<void> {
             foreignKey: "creatorId"
         });
 
+        List.hasMany(ListItem, {
+            as: "items",
+            sourceKey: "id",
+            foreignKey: "listId"
+        });
+
+        ListItem.belongsTo(List, {
+            as: "List",
+            foreignKey: "listId"
+        });
+
         await User.sync({ alter: true });
         await List.sync({ alter: true });
+        await ListItem.sync({ alter: true });
         console.info("Models initialized successfully.");
     }
     catch (error) {
