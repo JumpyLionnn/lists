@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {JSONSchemaType, compileSchema} from "validation";
-import { User } from "db";
+import { List, User } from "db";
+import { ListMember } from '../db/models/listMember';
 
 interface CreateListData {
     name: string;
@@ -48,12 +49,21 @@ export function setupCreateListRoute(){
             return;
         }
 
-        const list = await user.createList({
+        const list = await List.create({
             name: data.name
         });
 
+        const member = await ListMember.create({
+            userId: user.id,
+            listId: list.id
+        });
+
+        list.creatorId = member.id;
+        await list.save();
+
         res.status(201).send({
-            list: list
+            list: list,
+            member: member
         });
         console.log("List creation succeeded.");
     };

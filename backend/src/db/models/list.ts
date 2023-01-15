@@ -1,20 +1,20 @@
 import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, CreationOptional, DataTypes, ForeignKey, HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasManySetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
-import { User } from "./user";
 import { ListItem } from './listItem';
+import { ListMember } from './listMember';
 
 export class List extends Model<InferAttributes<List>, InferCreationAttributes<List>> {
     declare public id: CreationOptional<number>;
     declare public name: string;
-    declare public creatorId: ForeignKey<User["id"]>;
+    declare public creatorId: CreationOptional<ForeignKey<ListMember["id"]>>;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 
-    declare creator?: NonAttribute<User>;
+    declare creator?: NonAttribute<ListMember>;
 
-    declare getCreator: BelongsToGetAssociationMixin<User>;
-    declare setCreator: BelongsToSetAssociationMixin<User, User["id"]>;
-    declare createCreator: BelongsToCreateAssociationMixin<User>;
+    declare getCreator: BelongsToGetAssociationMixin<ListMember>;
+    declare setCreator: BelongsToSetAssociationMixin<ListMember, ListMember["id"]>;
+    declare createCreator: BelongsToCreateAssociationMixin<ListMember>;
 
     declare getItems: HasManyGetAssociationsMixin<ListItem>;
     declare addItem: HasManyAddAssociationMixin<ListItem, number>;
@@ -26,6 +26,17 @@ export class List extends Model<InferAttributes<List>, InferCreationAttributes<L
     declare hasItems: HasManyHasAssociationsMixin<ListItem, number>;
     declare countItems: HasManyCountAssociationsMixin;
     declare createItem: HasManyCreateAssociationMixin<ListItem, 'listId'>;
+
+    declare getMembers: HasManyGetAssociationsMixin<ListMember>;
+    declare addMember: HasManyAddAssociationMixin<ListMember, number>;
+    declare addMembers: HasManyAddAssociationsMixin<ListMember, number>;
+    declare setMembers: HasManySetAssociationsMixin<ListMember, number>;
+    declare removeMember: HasManyRemoveAssociationMixin<ListMember, number>;
+    declare removeMembers: HasManyRemoveAssociationsMixin<ListMember, number>;
+    declare hasMember: HasManyHasAssociationMixin<ListMember, number>;
+    declare hasMembers: HasManyHasAssociationsMixin<ListMember, number>;
+    declare countMembers: HasManyCountAssociationsMixin;
+    declare createMember: HasManyCreateAssociationMixin<ListMember, 'listId'>;
 
     declare items?: NonAttribute<List[]>;
 }
@@ -43,7 +54,7 @@ export function initListModel(sequelize: Sequelize): void {
             type: DataTypes.STRING(50)
         },
         creatorId: {
-            allowNull: false,
+            allowNull: true,
             type: DataTypes.INTEGER
         },
         createdAt: DataTypes.DATE,

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { List } from "db";
 import {JSONSchemaType, compileSchema} from "validation";
+import { ListMember } from '../db/models/listMember';
 
 interface GetItemsData {
     listId: string;
@@ -61,9 +62,16 @@ export function setupGetItemsRoute(){
             return;
         }
 
-        if(list.creatorId !== userPayload.id){
-            console.log(`Get items faild. The user with the id ${userPayload.id} does not own the list with id='${list.id}'.`);
-            res.status(400).send({error: "You dont own the list."});
+        const member = await ListMember.findOne({
+            where: {
+                userId: userPayload.id,
+                listId: list.id
+            }
+        });
+
+        if(member === null){
+            console.log(`Get items faild. The user with the id ${userPayload.id} is not a member of the list with id='${list.id}'.`);
+            res.status(400).send({error: "You are not a memeber of this list."});
             return;
         }
 

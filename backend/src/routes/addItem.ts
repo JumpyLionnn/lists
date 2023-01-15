@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {JSONSchemaType, compileSchema} from "validation";
-import { List } from 'db';
+import { List, ListMember } from 'db';
 
 interface AddItemData {
     listId: number;
@@ -54,9 +54,16 @@ export function setupAddItemRoute(){
             return;
         }
 
-        if(list.creatorId !== userPayload.id){
-            console.log(`Add item faild. The user with the id ${userPayload.id} does not own the list with id='${list.id}'.`);
-            res.status(400).send({error: "You dont own the list."});
+        const member = await ListMember.findOne({
+            where: {
+                listId: list.id,
+                userId: userPayload.id
+            }
+        });
+
+        if(member === null){
+            console.log(`Add item faild. The user with the id ${userPayload.id} is not a member of the list with id='${list.id}'.`);
+            res.status(400).send({error: "You are not a member of this list."});
             return;
         }
 

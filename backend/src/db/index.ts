@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize";
 import { User, initUserModel } from "./models/user";
 import { List, initListModel } from './models/list';
 import { ListItem, initListItemModel } from "./models/listItem";
+import { initListMemberModel, ListMember } from './models/listMember';
 
 
 let sequelize: Sequelize | null = null;
@@ -38,18 +39,29 @@ export async function init(): Promise<void> {
 
     console.info("Initalizing models...");
     try {
-        initUserModel(sequelize);
+        initUserModel(sequelize); 
         initListModel(sequelize);
+        initListMemberModel(sequelize);
         initListItemModel(sequelize);
 
-        User.hasMany(List, {
-            sourceKey: "id",
-            foreignKey: "creatorId"
+        User.hasMany(ListMember, {
+            as: "listMembers",
+            foreignKey: "userId"
+        });
+        ListMember.belongsTo(User, {
+            as: "user",
+            foreignKey: "userId"
         });
 
-        List.belongsTo(User, {
-            as: "Creator",
-            foreignKey: "creatorId"
+        List.hasMany(ListMember, {
+            sourceKey: "id",
+            as: "members",
+            foreignKey: "listId"
+        });
+        ListMember.belongsTo(List, {
+            targetKey: "id",
+            //as: "id",
+            foreignKey: "listId"
         });
 
         List.hasMany(ListItem, {
@@ -65,6 +77,7 @@ export async function init(): Promise<void> {
 
         await User.sync({ alter: true });
         await List.sync({ alter: true });
+        await ListMember.sync({ force: true });
         await ListItem.sync({ alter: true });
         console.info("Models initialized successfully.");
     }
@@ -76,5 +89,7 @@ export async function init(): Promise<void> {
 export {
     sequelize,
     User,
-    List
+    List,
+    ListMember,
+    ListItem
 };
