@@ -5,6 +5,7 @@ import { setupCreateListRoute } from "./createList";
 import { setupGetListRoute } from "./getLists";
 import { setupAddItemRoute } from "./addItem";
 import { setupGetItemsRoute } from "./getItems";
+import { setupJoinListRoute } from "./joinList";
 
 export function setupRoutes(){
     const router = Router();
@@ -15,6 +16,7 @@ export function setupRoutes(){
     router.use(authRequired());
     // routes that require authentication
     router.post("/lists/create", setupCreateListRoute());
+    router.post("/lists/join", setupJoinListRoute());
     router.get("/lists", setupGetListRoute());
     router.post("/lists/items/create", setupAddItemRoute());
     router.get("/lists/items", setupGetItemsRoute());

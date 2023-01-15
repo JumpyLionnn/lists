@@ -50,7 +50,7 @@ export function setupGetItemsRoute(){
 
         const userPayload = <{ id: number } | undefined>req.user;
         if(!(userPayload && userPayload.id)){
-            console.error("Get list user payload id is not defined.");
+            console.error("Get items user payload id is not defined.");
             res.status(500).send({error: "Internal server error."});
             return;
         }

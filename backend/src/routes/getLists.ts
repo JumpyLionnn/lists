@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { List } from "db";
+import { List, ListMember } from "db";
 
 export function setupGetListRoute(){
     return async (req: Request, res: Response) => {
@@ -13,9 +13,15 @@ export function setupGetListRoute(){
         }
 
         const lists = await List.findAll({
-            where: {
-                creatorId: userPayload.id
-            }
+            include: [
+                {
+                    model: ListMember,
+                    as: "members",
+                    where: {
+                        userId: userPayload.id
+                    }
+                }
+            ]
         });
 
         res.status(200).send({

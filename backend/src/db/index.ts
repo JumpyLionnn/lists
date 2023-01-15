@@ -54,13 +54,11 @@ export async function init(): Promise<void> {
         });
 
         List.hasMany(ListMember, {
-            sourceKey: "id",
             as: "members",
             foreignKey: "listId"
         });
         ListMember.belongsTo(List, {
             targetKey: "id",
-            //as: "id",
             foreignKey: "listId"
         });
 

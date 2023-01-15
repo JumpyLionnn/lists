@@ -1,6 +1,8 @@
 <script lang="ts">
     import IconButton from "@smui/icon-button";
+    import Button, { Label } from "@smui/button";
     import CreateListDialog from "$lib/components/dialogs/CreateListDialog.svelte";
+    import JoinListDialog from "$lib/components/dialogs/JoinListDialog.svelte";
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import List, {Item, Text} from "@smui/list";
     import * as api from "$lib/api";
@@ -16,6 +18,7 @@
     const listsPromise = getLists();
 
     let createListDialog: CreateListDialog;
+    let joinListDialog: JoinListDialog;
 
     let lists: ListData[] = [];
     let selectedListIndex = -1;
@@ -48,9 +51,28 @@
             lists = lists;
         }
     }
+
+    function openJoinListDialog(){
+        joinListDialog.open();
+    }
+    
+    async function onJoinList(event: CustomEvent<{id: number}>){
+        const id = event.detail.id;
+        const res = await api.post("lists/join", {
+            body: {
+                listId: id
+            }
+        });
+        if(res.ok){
+            const data = await res.json();
+            lists.push(data.list);
+            lists = lists;
+        }
+    }
 </script>
 
 <CreateListDialog bind:this={createListDialog} on:create={onCreateList}/>
+<JoinListDialog bind:this={joinListDialog} on:join={onJoinList}/>
 
 <div class="inline-flex flex-col h-full w-full">
     <TopAppBar variant="static" color="primary">
@@ -58,6 +80,9 @@
             <Section>
                 <Title>Your lists</Title>
                 <IconButton class="material-icons" on:click={openCreateListDialog}>add</IconButton>
+                <Button on:click={openJoinListDialog}>
+                    <Label>Join</Label>
+                </Button>
             </Section>
         </Row>
     </TopAppBar>
