@@ -6,8 +6,17 @@
 	import Button, { Label } from "@smui/button";
 	import type { ListData, ItemData } from "$lib/models";
     import ListSelection from "$lib/components/ListsSelection.svelte";
+	import { onDestroy, onMount } from "svelte";
 
     let selectedList: ListData | null = null;
+
+    onMount(() => {
+        api.notifier.on("item:add", addItem);
+    });
+
+    onDestroy(() => {
+        api.notifier.removeListener("item:add", addItem);
+    });
 
     async function onListSelected(list: ListData){
         selectedList = list
@@ -40,10 +49,14 @@
         itemName = "";
         if(res.ok){
             const data = await res.json();
+            addItem(data);
+        } 
+    }
+
+    function addItem(data: {item: ItemData}){
             items.push(data.item);
             items = items;
         }
-    }
 </script>
 
 <style lang="postcss">

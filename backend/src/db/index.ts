@@ -75,7 +75,7 @@ export async function init(): Promise<void> {
 
         await User.sync({ alter: true });
         await List.sync({ alter: true });
-        await ListMember.sync({ force: true });
+        await ListMember.sync({ alter: true });
         await ListItem.sync({ alter: true });
         console.info("Models initialized successfully.");
     }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {JSONSchemaType, compileSchema} from "validation";
 import { List, ListMember } from 'db';
+import { sendMessage } from 'sockets';
 
 interface AddItemData {
     listId: number;
@@ -71,9 +72,12 @@ export function setupAddItemRoute(){
             content: data.content
         });
 
-        res.status(201).send({
+        const responseData = {
             item: item
-        });
+        };
+        sendMessage(list.id, member.userId, "item:add", responseData);
+
+        res.status(201).send(responseData);
         console.log("Item creation succeeded.");
     };
 }

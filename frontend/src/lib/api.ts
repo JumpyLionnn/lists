@@ -1,7 +1,12 @@
 import { env } from "$env/dynamic/public";
 import { writable, type Writable, get as getStore } from "svelte/store";
+import EventEmitter from "events";
 
+const secure = env.PUBLIC_SERVER_SECURE === "true" ? true : false;
+const protocolSuffix =  (secure ? "s" : "") + "://";
 const baseUrl = env.PUBLIC_SERVER_URL + (env.PUBLIC_SERVER_URL.endsWith("/") ? "" : "/");
+const httpUrl = "http" + protocolSuffix + baseUrl;
+const socketUrl = "ws" + protocolSuffix + baseUrl;
 
 interface QueryParams{
     [key: string]: string | number;
@@ -36,7 +41,7 @@ function getQueryString(queryParams?: QueryParams){
 }
 
 async function get(path: string, options?: GetOptions){
-    const url = baseUrl + path + getQueryString(options?.query);
+    const url = httpUrl + path + getQueryString(options?.query);
     return fetch(url, {
         method: "GET",
         mode: "cors",
@@ -45,7 +50,7 @@ async function get(path: string, options?: GetOptions){
 }
 
 async function post(path: string, options?: PostOptions){
-    const url = baseUrl + path + getQueryString(options?.query);
+    const url = httpUrl + path + getQueryString(options?.query);
     return fetch(url, {
         method: "POST",
         mode: "cors",
@@ -57,7 +62,30 @@ async function post(path: string, options?: PostOptions){
     });
 }
 
+const notifier = new EventEmitter();
+let socket: WebSocket | null = null;
 const loggedIn: Writable<boolean | null> = writable(null);
+loggedIn.subscribe((value) => {
+    if(value){
+        if(socket && (socket.readyState === socket.OPEN || socket.readyState === socket.CONNECTING)){
+            console.warn("logged in state changed to true but socket was already connected");
+            return;
+        }
+        socket = new WebSocket(socketUrl + "listen");
+        socket.onmessage = (event: MessageEvent) => {
+            const message = JSON.parse(event.data);
+            notifier.emit(message.type, message.data);
+        };
+        socket.onerror = (error) => {
+            console.error(error);
+        };
+    }
+    else{
+        socket?.close();
+        socket = null;
+        return;
+    }
+});
 loggedIn.set((await (await get("check-auth")).json()).loggedIn);
 
 async function login(email: string, password: string){
@@ -106,7 +134,8 @@ export {
     post,
     login,
     logout,
-    loggedIn
+    loggedIn,
+    notifier
 };
 
 export type { 

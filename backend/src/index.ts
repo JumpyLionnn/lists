@@ -7,6 +7,7 @@ import { init as initDatabase } from "./db";
 import { authRequired, init as initAuthProtector } from "middlewares/auth";
 import assert from 'assert';
 import { setupRoutes } from './routes/index';
+import { init as initWebSockets } from "sockets";
 
 async function main(){
     console.info("Starting the server.");
@@ -32,9 +33,11 @@ async function main(){
     console.info("Routes have been created successfully.");
     
     const port = process.env.PORT || 3000;
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
         console.info(`Listening on port ${port}.`);
     });
+
+    initWebSockets(server);
 }
 
 function initCore(){
