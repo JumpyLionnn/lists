@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { List } from "db";
 import {JSONSchemaType, compileSchema} from "validation";
 import { ListMember } from '../db/models/listMember';
+import { sendMessageToList } from '../sockets';
 
 interface JoinListData {
     listId: number;
@@ -64,6 +65,13 @@ export function setupJoinListRoute(){
         
         const member = await list.createMember({
             userId: userPayload.id
+        });
+
+        sendMessageToList(list.id, "list:join", {
+            member: {
+                userId: member.userId,
+                username: (await member.getUser()).username
+            }
         });
 
         res.status(200).send({

@@ -6,6 +6,7 @@
 	import Button, { Label } from "@smui/button";
 	import type { ListData, ItemData } from "$lib/models";
     import ListSelection from "$lib/components/ListsSelection.svelte";
+    import MembersList from "$lib/components/MembersList.svelte";
 	import { onDestroy, onMount } from "svelte";
 
     let selectedList: ListData | null = null;
@@ -75,21 +76,32 @@
     
         <AppContent class="flex-auto">
             {#if selectedList !== null}
-                <div class="p-4">
-                    <h2 class="text-3xl">{selectedList.name}</h2>
-                    <div class="flex items-center gap-4">
-                        <Textfield variant="filled" type="text" bind:value={itemName} label="Item name" />
-                        <Button variant="raised" on:click={onItemAddClicked}>
-                            <Label>Add</Label>
-                        </Button>
-                    </div>
-                    <List class="demo-list" nonInteractive>
-                        {#each items as item}
-                            <Item>
-                                <Text>{item.content}</Text>
-                            </Item>
-                        {/each}
-                    </List>
+                <div class="h-full overflow-hidden flex relative">
+                    <AppContent class="flex-auto h-full">
+                        <div class="p-4 h-full flex flex-col">
+                            <h2 class="text-3xl">{selectedList.name}</h2>
+                            <div class="flex items-center gap-4">
+                                <Textfield variant="filled" type="text" bind:value={itemName} label="Item name" />
+                                <Button variant="raised" on:click={onItemAddClicked}>
+                                    <Label>Add</Label>
+                                </Button>
+                            </div>
+                            <div class="grow">
+                                <List nonInteractive>
+                                    {#each items as item}
+                                        <Item>
+                                            <Text>{item.content}</Text>
+                                        </Item>
+                                    {/each}
+                                </List>
+                            </div>
+                        </div>
+                    </AppContent>
+                    <Drawer class="overflow-hidden">
+                        <Content>
+                            <MembersList listId={selectedList.id}/>
+                        </Content>
+                    </Drawer>
                 </div>
             {/if}
         </AppContent>

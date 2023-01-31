@@ -6,6 +6,7 @@ import { setupGetListRoute } from "./getLists";
 import { setupAddItemRoute } from "./addItem";
 import { setupGetItemsRoute } from "./getItems";
 import { setupJoinListRoute } from "./joinList";
+import { setupGetMembersRoute } from "./getMembers";
 
 export function setupRoutes(){
     const router = Router();
@@ -20,6 +21,7 @@ export function setupRoutes(){
     router.get("/lists", setupGetListRoute());
     router.post("/lists/items/create", setupAddItemRoute());
     router.get("/lists/items", setupGetItemsRoute());
+    router.get("/lists/members", setupGetMembersRoute());
 
 
     return router;

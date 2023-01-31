@@ -10,3 +10,8 @@ export interface ItemData{
     listId: number;
     content: string;
 }
+
+export interface MemberData{
+    userId: number;
+    username: string;
+}

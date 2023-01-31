@@ -11,9 +11,10 @@ export class ListMember extends Model<InferAttributes<ListMember>, InferCreation
     declare updatedAt: CreationOptional<Date>;
 
     declare list?: NonAttribute<List>;
+    declare user?: NonAttribute<User>;
 
     declare getList: BelongsToGetAssociationMixin<List>;
-    declare getUser: BelongsToGetAssociationMixin<List>;
+    declare getUser: BelongsToGetAssociationMixin<User>;
 }
 
 export function initListMemberModel(sequelize: Sequelize): void {

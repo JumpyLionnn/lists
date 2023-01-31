@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
-import { List } from "db";
 import {JSONSchemaType, compileSchema} from "validation";
-import { ListMember } from '../db/models/listMember';
+import { List, ListMember, User } from "db";
 
-interface GetItemsData {
+interface GetMembersData {
     listId: string;
 }
 
-export function setupGetItemsRoute(){
-    
-    const getItemsDataSchema: JSONSchemaType<GetItemsData> = {
+export function setupGetMembersRoute(){
+
+    const getMembersDataSchema: JSONSchemaType<GetMembersData> = {
         type: "object",
         properties: {
             listId: {
@@ -21,15 +20,15 @@ export function setupGetItemsRoute(){
         additionalProperties: false
     };
 
-    const validateGetItemsData = compileSchema(getItemsDataSchema);
+    const validateGetMembersData = compileSchema(getMembersDataSchema);
 
     return async (req: Request, res: Response) => {
-        console.log("Get items request.");
+        console.log("Get list members request.");
 
-        const validationSuccess = validateGetItemsData(req.query);
+        const validationSuccess = validateGetMembersData(req.query);
         if (!validationSuccess) {
-            console.log("Get items request faild. invalid data.");
-            const message = validateGetItemsData.errors?.find((error) => error.message !== undefined)?.message ?? "Unable to get items.";
+            console.log("Get members request faild. invalid data.");
+            const message = validateGetMembersData.errors?.find((error) => error.message !== undefined)?.message ?? "Unable to get members.";
             res.status(400).send({error: message });
             return;
         }
@@ -37,27 +36,28 @@ export function setupGetItemsRoute(){
         if(typeof req.query.listId === "string"){
             listId = parseInt(req.query.listId);
             if(isNaN(listId)){
-                console.log("Get items request faild. invalid data.");
+                console.log("Get members request faild. invalid data.");
                 res.status(400).send({error: "Invalid list id." });
                 return;
             }
         }
         else{
-            console.log("Get items request faild. invalid data.");
+            console.log("Get members request faild. invalid data.");
             res.status(400).send({error: "Invalid list id." });
             return;
         }
 
+
         const userPayload = <{ id: number } | undefined>req.user;
         if(!(userPayload && userPayload.id)){
-            console.error("Get items user payload id is not defined.");
+            console.error("Get list members user payload id is not defined.");
             res.status(500).send({error: "Internal server error."});
             return;
         }
 
         const list = await List.findByPk(listId);
         if(list === null){
-            console.log(`Get items faild. There is no list with id='${listId}'.`);
+            console.log(`Get members faild. There is no list with id='${listId}'.`);
             res.status(400).send({error: "The list does not exist."});
             return;
         }
@@ -70,16 +70,24 @@ export function setupGetItemsRoute(){
         });
 
         if(member === null){
-            console.log(`Get items faild. The user with the id ${userPayload.id} is not a member of the list with id='${list.id}'.`);
+            console.log(`Get members faild. The user with the id ${userPayload.id} is not a member of the list with id='${list.id}'.`);
             res.status(400).send({error: "You are not a memeber of this list."});
             return;
         }
 
-        const items = await list.getItems();
+        const members = await list.getMembers({
+            include: {
+                model: User,
+                as: "user"
+            }
+        })
 
         res.status(200).send({
-            items: items
+            members: members.map((member) => ({
+                userId: member.user!.id,
+                username: member.user!.username
+            }))
         });
-        console.log("Items get succeeded.");
+        console.log("Members get succeeded.");
     };
 }
