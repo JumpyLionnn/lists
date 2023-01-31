@@ -40,7 +40,7 @@
             {/if}
         </div>
     </nav>
-    <div class="flex-grow">
+    <div class="flex-grow overflow-hidden">
         <slot></slot>
     </div>
 </div>

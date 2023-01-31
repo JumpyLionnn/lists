@@ -86,7 +86,7 @@
                                     <Label>Add</Label>
                                 </Button>
                             </div>
-                            <div class="grow">
+                            <div class="grow overflow-auto">
                                 <List nonInteractive>
                                     {#each items as item}
                                         <Item>
