@@ -62,6 +62,19 @@ async function post(path: string, options?: PostOptions){
     });
 }
 
+async function del(path: string, options?: PostOptions){
+    const url = httpUrl + path + getQueryString(options?.query);
+    return fetch(url, {
+        method: "DELETE",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(options?.body)
+    });
+}
+
 const notifier = new EventEmitter();
 let socket: WebSocket | null = null;
 const loggedIn: Writable<boolean | null> = writable(null);
@@ -132,6 +145,7 @@ async function logout(){
 export {
     get,
     post,
+    del,
     login,
     logout,
     loggedIn,
