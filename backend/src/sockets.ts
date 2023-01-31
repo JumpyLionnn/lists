@@ -24,7 +24,19 @@ class MemberSocket {
                 socket.send(data);
             }
             else{
-                console.error(`socket id ${socketId} was registered but the socket does not exist.`);
+                console.warn(`socket id ${socketId} was registered but the socket does not exist.`);
+            }
+        }
+    }
+
+    public disconnectSockets(){
+        for (const socketId of this.sockets) {
+            const socket = sockets.get(socketId);
+            if(socket){
+                socket.close();
+            }
+            else{
+                console.warn(`socket id ${socketId} was registered but the socket does not exist.`);
             }
         }
     }
@@ -206,6 +218,24 @@ export function joinListGroup(listId: number, userId: number){
             collection.add(member);
         }
     }
+}
+
+export function disconnectMember(userId: number){
+    const member = members.get(userId);
+    if(member){
+        member.disconnectSockets();
+        for (const listId of member.listIds) {
+            const list = lists.get(listId);
+            if(list){
+                list.remove(member.userId);
+            }
+            else{
+                console.warn(`List ${listId} was registered in the member but didnt exist.`);
+            }
+        }
+        members.delete(userId);
+    }
+    
 }
 
 function verifyJwt(token: string): Promise<string | jwt.JwtPayload | null>{
