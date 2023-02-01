@@ -15,11 +15,13 @@
 
     onMount(() => {
         api.notifier.addListener("item:add", addItem);
+        api.notifier.addListener("item:update", updateItem);
         api.notifier.addListener("item:remove", removeItem);
     });
 
     onDestroy(() => {
         api.notifier.removeListener("item:add", addItem);
+        api.notifier.removeListener("item:update", updateItem);
         api.notifier.removeListener("item:remove", removeItem);
     });
 
@@ -45,7 +47,7 @@
             console.error("selected list is null while add item clicked!");
             return;
         }
-        const res = await api.post("lists/items/create", {
+        await api.post("lists/items/create", {
             body: {
                 listId: selectedList.id,
                 content: itemName
@@ -80,6 +82,16 @@
             if(item.id === data.item.id){
                 items.splice(i, 1);
                 items = items;
+                break;
+            }
+        }
+    }
+
+    function updateItem(data: {item: ItemData}){
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if(item.id === data.item.id){
+                items[i] = data.item;
                 break;
             }
         }

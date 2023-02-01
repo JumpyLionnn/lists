@@ -62,6 +62,19 @@ async function post(path: string, options?: PostOptions){
     });
 }
 
+async function patch(path: string, options?: PostOptions){
+    const url = httpUrl + path + getQueryString(options?.query);
+    return fetch(url, {
+        method: "PATCH",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(options?.body)
+    });
+}
+
 async function del(path: string, options?: PostOptions){
     const url = httpUrl + path + getQueryString(options?.query);
     return fetch(url, {
@@ -145,6 +158,7 @@ async function logout(){
 export {
     get,
     post,
+    patch,
     del,
     login,
     logout,

@@ -1,21 +1,61 @@
 <script lang="ts">
+	import { ClassList } from "$lib/classList";
 	import type { ItemData } from "$lib/models";
 	import IconButton from "@smui/icon-button";
-    import {Item, Text} from "@smui/list";
+    import {Item} from "@smui/list";
 	import { createEventDispatcher } from "svelte";
+    import * as api from "$lib/api";
 
     export let item: ItemData;
 
+    let contentInput: HTMLInputElement;
+    let previousContent: string;
+
+    let itemClassList = new ClassList("flex", "justify-between", "items-center", "hover:bg-gray-200", "group", "py-7");
+    let removeButtonClassList = new ClassList("material-icons", "group-hover:block", "text-red-500", "hover:text-red-600", "hidden");
+
     const dispacher = createEventDispatcher();
 
-    function onRemoveButtonClicked(){
+    function onRemoveButtonClicked(){        
         dispacher("remove", {
             item
         });
     }
-</script>
 
-<Item class="flex justify-between items-center hover:bg-gray-200 group py-7">
-    <Text>{item.content}</Text>
-    <IconButton class="material-icons hidden group-hover:block text-red-500 hover:text-red-600" on:click={onRemoveButtonClicked}>delete</IconButton>
+    function onContentChange(){
+        contentInput.blur();
+        item.content = item.content.trim();
+        if(item.content.length === 0){
+            console.log(item.content);
+            item.content = previousContent;
+            return;
+        }
+        api.patch("lists/items/update", {
+            body: {
+                itemId: item.id,
+                content: item.content
+            }
+        });
+    }
+
+    function onInputFocused(){
+        previousContent = item.content;
+        itemClassList.add("bg-gray-200");
+        removeButtonClassList.replace("hidden", "block");
+    }
+
+    function onInputBlured(){
+        itemClassList.remove("bg-gray-200");
+        removeButtonClassList.replace("block", "hidden");
+    }
+</script>
+<style>
+    input{
+        outline: 0;
+    }
+</style>
+
+<Item class={$itemClassList}>
+    <input type="text" name="content" class="appearance-none w-full border-y-2 border-transparent border-solid bg-transparent focus:border-b-black" bind:this={contentInput} bind:value={item.content} on:change={onContentChange} on:focus={onInputFocused} on:blur={onInputBlured}>
+    <IconButton class={$removeButtonClassList} on:click={onRemoveButtonClicked}>delete</IconButton>
 </Item>
