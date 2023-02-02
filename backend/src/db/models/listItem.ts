@@ -5,6 +5,7 @@ export class ListItem extends Model<InferAttributes<ListItem>, InferCreationAttr
     declare public id: CreationOptional<number>;
     declare public content: string;
     declare public listId: ForeignKey<List["id"]>;
+    declare public checked: CreationOptional<boolean>;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -31,6 +32,11 @@ export function initListItemModel(sequelize: Sequelize): void {
         listId: {
             allowNull: false,
             type: DataTypes.INTEGER
+        },
+        checked: {
+            allowNull: false,
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE

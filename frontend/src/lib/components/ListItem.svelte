@@ -2,6 +2,7 @@
 	import { ClassList } from "$lib/classList";
 	import type { ItemData } from "$lib/models";
 	import IconButton from "@smui/icon-button";
+	import Checkbox from "@smui/checkbox";
     import {Item} from "@smui/list";
 	import { createEventDispatcher } from "svelte";
     import * as api from "$lib/api";
@@ -48,6 +49,16 @@
         itemClassList.remove("bg-gray-200");
         removeButtonClassList.replace("block", "hidden");
     }
+
+    function onCheckedChange(event: CustomEvent<any>){
+        const checked = (<HTMLInputElement>event.target).checked;
+        api.patch("lists/items/toggle", {
+            body: {
+                itemId: item.id,
+                checked: checked
+            }
+        });
+    }
 </script>
 <style>
     input{
@@ -56,6 +67,7 @@
 </style>
 
 <Item class={$itemClassList}>
-    <input type="text" name="content" class="appearance-none w-full border-y-2 border-transparent border-solid bg-transparent focus:border-b-black" bind:this={contentInput} bind:value={item.content} on:change={onContentChange} on:focus={onInputFocused} on:blur={onInputBlured}>
+    <Checkbox on:change={onCheckedChange} bind:checked={item.checked} />
+    <input type="text" name="content" class={"appearance-none w-full border-y-2 border-transparent border-solid bg-transparent focus:border-b-black"} class:line-through={item.checked} bind:this={contentInput} bind:value={item.content} on:change={onContentChange} on:focus={onInputFocused} on:blur={onInputBlured}>
     <IconButton class={$removeButtonClassList} on:click={onRemoveButtonClicked}>delete</IconButton>
 </Item>

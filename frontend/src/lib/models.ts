@@ -9,6 +9,7 @@ export interface ItemData{
     id: number;
     listId: number;
     content: string;
+    checked: boolean;
 }
 
 export interface MemberData{
