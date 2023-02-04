@@ -2,8 +2,8 @@ export interface ListData{
     id: number;
     creatorId: number;
     name: string;
+    joinCode: string;
 }
-
 
 export interface ItemData{
     id: number;

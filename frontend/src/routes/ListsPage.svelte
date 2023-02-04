@@ -30,7 +30,9 @@
     });
 
     async function onListSelected(list: ListData){
-        selectedList = list
+        selectedList = list;
+        items = [];
+        checkedItems = [];
         const res = await api.get("lists/items", {
             query: {
                 listId: selectedList.id
@@ -172,6 +174,7 @@
                     <AppContent class="flex-auto h-full">
                         <div class="p-4 h-full flex flex-col">
                             <h2 class="text-3xl">{selectedList.name}</h2>
+                            <h3 class="text-xl">join code: {selectedList.joinCode}</h3>
                             <div class="flex items-center gap-4">
                                 <Textfield variant="filled" type="text" bind:value={itemName} label="Item name" />
                                 <Button variant="raised" on:click={onItemAddClicked}>

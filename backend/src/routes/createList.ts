@@ -2,10 +2,35 @@ import { Request, Response } from "express";
 import {JSONSchemaType, compileSchema} from "validation";
 import { List, User } from "db";
 import { ListMember } from '../db/models/listMember';
+import * as crypto from "crypto";
 
 interface CreateListData {
     name: string;
 }
+
+function generateRandomString(length: number): Promise<string> {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    
+    return new Promise((resolve, reject) => {
+        crypto.randomBytes(length, (error, buffer) => {
+            if(error !== null){
+                console.error(`Faild to generate random crypto string: ${error}.`);
+                reject(error);
+                return;
+            }
+
+            let result = new Array(length);
+            let cursor = 0;
+            for (let i = 0; i < length; i++) {
+              cursor += buffer[i];
+              result[i] = chars[cursor % chars.length];
+            }
+            resolve(result.join(''));
+        });
+        
+    });
+  }
+
 
 export function setupCreateListRoute(){
     const createListDataSchema: JSONSchemaType<CreateListData> = {
@@ -49,8 +74,14 @@ export function setupCreateListRoute(){
             return;
         }
 
+        let joinCode = await generateRandomString(6);
+        while((await List.findOne({ where: {joinCode: joinCode} })) !== null){
+            joinCode = await generateRandomString(6);
+        }
+
         const list = await List.create({
-            name: data.name
+            name: data.name,
+            joinCode: joinCode
         });
 
         const member = await ListMember.create({

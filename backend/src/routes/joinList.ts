@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { List } from "db";
+import { List, sequelize } from "db";
 import {JSONSchemaType, compileSchema} from "validation";
 import { ListMember } from '../db/models/listMember';
 import { sendMessageToList } from '../sockets';
+import { Op } from "sequelize";
 
 interface JoinListData {
-    listId: number;
+    joinCode: string;
 }
 
 export function setupJoinListRoute(){
@@ -13,12 +14,14 @@ export function setupJoinListRoute(){
     const joinListDataSchema: JSONSchemaType<JoinListData> = {
         type: "object",
         properties: {
-            listId: {
-                type: "integer",
-                errorMessage: "Invalid list id.",
+            joinCode: {
+                type: "string",
+                maxLength: 6,
+                minLength: 6,
+                errorMessage: "Invalid list join code.",
             }
         },
-        required: ["listId"],
+        required: ["joinCode"],
         additionalProperties: false
     };
 
@@ -42,10 +45,17 @@ export function setupJoinListRoute(){
             res.status(500).send({error: "Internal server error."});
             return;
         }
+        
+        const list = await List.findOne({
+            where: {
+                joinCode: {
+                    [Op.eq]: data.joinCode
+                }
+            }
+        });
 
-        const list = await List.findByPk(data.listId);
         if(list === null){
-            console.log(`Join list faild. There is no list with id='${data.listId}'.`);
+            console.log(`Join list faild. There is no list with join code='${data.joinCode}'.`);
             res.status(400).send({error: "The list does not exist."});
             return;
         }

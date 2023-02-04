@@ -56,18 +56,10 @@
         joinListDialog.open();
     }
     
-    async function onJoinList(event: CustomEvent<{id: number}>){
-        const id = event.detail.id;
-        const res = await api.post("lists/join", {
-            body: {
-                listId: id
-            }
-        });
-        if(res.ok){
-            const data = await res.json();
-            lists.push(data.list);
-            lists = lists;
-        }
+    function onJoinList(event: CustomEvent<{list: ListData}>): void {
+        const list = event.detail.list;
+        lists.push(list);
+        lists = lists;
     }
 </script>
 

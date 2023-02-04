@@ -6,6 +6,7 @@ export class List extends Model<InferAttributes<List>, InferCreationAttributes<L
     declare public id: CreationOptional<number>;
     declare public name: string;
     declare public creatorId: CreationOptional<ForeignKey<ListMember["id"]>>;
+    declare public joinCode: string;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -56,6 +57,11 @@ export function initListModel(sequelize: Sequelize): void {
         creatorId: {
             allowNull: true,
             type: DataTypes.INTEGER
+        },
+        joinCode: {
+            allowNull: false,
+            type: DataTypes.STRING(6).BINARY,
+            unique: true
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
