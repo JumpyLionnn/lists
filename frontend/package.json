@@ -51,6 +51,7 @@
 		"vite": "^4.0.0"
 	},
 	"type": "module",
+	"main": "build/browser/index.js",
 	"dependencies": {
 		"dotenv": "^16.0.3"
 	}
