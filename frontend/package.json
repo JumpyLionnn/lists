@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"start": "node -r dotenv/config build/browser",
-		"build": "npm run prepare && vite build",
+		"build": "npm run prepare && npm run check && vite build",
 		"build-mobile": "cross-env PUBLIC_MOBILE_BUILD=true npm run build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
