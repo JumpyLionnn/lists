@@ -1,13 +1,24 @@
 <script lang="ts">
     import { loggedIn } from "$lib/api";
+    import { isMobile } from "$lib/platform";
 	import HomePage from "./HomePage.svelte";
-	import ListsPage from "./ListsPage.svelte";
+	import DesktopListsPage from "$lib/components/desktop/ListsPage.svelte";
+	import MobileListsPage from "$lib/components/mobile/ListsPage.svelte";
+	import Redirect from "$lib/components/Redirect.svelte";
 </script>
 
 {#if $loggedIn}
-    <ListsPage />
+    {#if isMobile()}
+        <MobileListsPage />
+    {:else}
+        <DesktopListsPage />
+    {/if}
 {:else}
-    <HomePage />
+    {#if isMobile()}
+        <Redirect route="/login" />
+    {:else}
+        <HomePage />
+    {/if}
 {/if}
 
 

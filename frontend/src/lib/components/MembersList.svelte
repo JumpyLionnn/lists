@@ -2,10 +2,10 @@
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import List, {Item, Text} from "@smui/list";
     import * as api from "$lib/api";
-	import type { MemberData } from "$lib/models";
+	import type { ListData, MemberData } from "$lib/models";
 	import { onDestroy, onMount } from 'svelte';
 
-    export let listId: number;
+    export let list: ListData;
 
     onMount(() => {
         api.notifier.on("list:join", addMember);
@@ -18,7 +18,7 @@
     async function getMembers(){
         return (await api.get("lists/members", {
             query: {
-                listId: listId
+                listId: list.id
             }
         })).json();
     }
@@ -38,7 +38,7 @@
 </script>
 
 <div class="inline-flex flex-col h-full w-full">
-    <TopAppBar variant="static" color="secondary">
+    <TopAppBar variant="static" color="primary">
         <Row>
             <Section>
                 <Title>Members</Title>
@@ -46,6 +46,7 @@
         </Row>
     </TopAppBar>
     <div class="grow">
+        <h2 class="text-center text-xl">Join code: {list.joinCode}</h2>
         <List>
             {#each members as member, i}
                 <Item>
