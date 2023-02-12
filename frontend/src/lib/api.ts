@@ -4,7 +4,8 @@ import EventEmitter from "events";
 
 const secure = env.PUBLIC_SERVER_SECURE === "true" ? true : false;
 const protocolSuffix =  (secure ? "s" : "") + "://";
-const baseUrl = (env.PUBLIC_SERVER_URL ?? "") + (env.PUBLIC_SERVER_URL.endsWith("/") ? "" : "/");
+const serverUrl = env.PUBLIC_SERVER_URL ?? "";
+const baseUrl = serverUrl + (serverUrl.endsWith("/") ? "" : "/");
 const httpUrl = "http" + protocolSuffix + baseUrl;
 const socketUrl = "ws" + protocolSuffix + baseUrl;
 
