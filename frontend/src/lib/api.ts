@@ -112,7 +112,9 @@ loggedIn.subscribe((value) => {
         return;
     }
 });
-loggedIn.set((await (await get("check-auth")).json()).loggedIn);
+(async () => {
+    loggedIn.set((await (await get("check-auth")).json()).loggedIn);
+})()
 
 async function login(email: string, password: string){
     if(getStore(loggedIn)){
