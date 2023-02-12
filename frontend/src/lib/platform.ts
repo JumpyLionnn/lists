@@ -1,6 +1,6 @@
-import { PUBLIC_MOBILE_BUILD } from "$env/static/public";
+import { env } from "$env/dynamic/public";
 
-const mobile = PUBLIC_MOBILE_BUILD === "true" ? true : false;
+const mobile = env.PUBLIC_MOBILE_BUILD === "true" ? true : false;
 
 export function isMobile() {
     return mobile;
