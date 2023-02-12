@@ -17,11 +17,16 @@ export async function init(): Promise<void> {
     const port = parseInt(process.env.DATABASE_PORT);
     assert(!isNaN(port), "Cannt connect to the database, DATABASE_PORT is not a number.");
 
+    let logging: boolean | ((sql: string, timing?: number | undefined) => void) = (message: string) => { console.log(`Database: ${message}.`); };
+    if(process.env.NODE_ENV === "production"){
+        logging = false;
+    }
+
     sequelize = new Sequelize({
         database: process.env.DATABASE_NAME,
         dialect: "mysql",
         host: process.env.DATABASE_HOST,
-        logging: (message: string) => { console.log(`Database: ${message}.`); },
+        logging: logging,
         password: process.env.DATABASE_PASSWORD,
         port: port,
         username: process.env.DATABASE_USERNAME
@@ -39,7 +44,7 @@ export async function init(): Promise<void> {
 
     console.info("Initalizing models...");
     try {
-        initUserModel(sequelize); 
+        initUserModel(sequelize);
         initListModel(sequelize);
         initListMemberModel(sequelize);
         initListItemModel(sequelize);
