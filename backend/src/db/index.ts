@@ -19,6 +19,7 @@ export async function init(): Promise<void> {
 
     let logging: boolean | ((sql: string, timing?: number | undefined) => void) = (message: string) => { console.log(`Database: ${message}.`); };
     let options: object | undefined;
+    let useForeignKeyConstraint: boolean = false;
     if(process.env.NODE_ENV === "production"){
         logging = false;
         options = {
@@ -26,6 +27,7 @@ export async function init(): Promise<void> {
               rejectUnauthorized: true,
             },
         };
+        useForeignKeyConstraint = false;
     }
 
 
@@ -60,31 +62,43 @@ export async function init(): Promise<void> {
 
         User.hasMany(ListMember, {
             as: "listMembers",
-            foreignKey: "userId"
+            foreignKey: "userId",
+            foreignKeyConstraint: useForeignKeyConstraint,
+            constraints: useForeignKeyConstraint
         });
         ListMember.belongsTo(User, {
             as: "user",
-            foreignKey: "userId"
+            foreignKey: "userId",
+            foreignKeyConstraint: useForeignKeyConstraint,
+            constraints: useForeignKeyConstraint
         });
 
         List.hasMany(ListMember, {
             as: "members",
-            foreignKey: "listId"
+            foreignKey: "listId",
+            foreignKeyConstraint: useForeignKeyConstraint,
+            constraints: useForeignKeyConstraint
         });
         ListMember.belongsTo(List, {
             targetKey: "id",
-            foreignKey: "listId"
+            foreignKey: "listId",
+            foreignKeyConstraint: useForeignKeyConstraint,
+            constraints: useForeignKeyConstraint
         });
 
         List.hasMany(ListItem, {
             as: "items",
             sourceKey: "id",
-            foreignKey: "listId"
+            foreignKey: "listId",
+            foreignKeyConstraint: useForeignKeyConstraint,
+            constraints: useForeignKeyConstraint
         });
 
         ListItem.belongsTo(List, {
             as: "List",
-            foreignKey: "listId"
+            foreignKey: "listId",
+            foreignKeyConstraint: useForeignKeyConstraint,
+            constraints: useForeignKeyConstraint
         });
 
         await User.sync({ alter: true });
