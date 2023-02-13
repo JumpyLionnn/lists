@@ -18,13 +18,22 @@ export async function init(): Promise<void> {
     assert(!isNaN(port), "Cannt connect to the database, DATABASE_PORT is not a number.");
 
     let logging: boolean | ((sql: string, timing?: number | undefined) => void) = (message: string) => { console.log(`Database: ${message}.`); };
+    let options: object | undefined;
     if(process.env.NODE_ENV === "production"){
         logging = false;
+        options = {
+            ssl: {
+              rejectUnauthorized: true,
+            },
+        };
     }
+
+
 
     sequelize = new Sequelize({
         database: process.env.DATABASE_NAME,
         dialect: "mysql",
+        dialectOptions: options,
         host: process.env.DATABASE_HOST,
         logging: logging,
         password: process.env.DATABASE_PASSWORD,
