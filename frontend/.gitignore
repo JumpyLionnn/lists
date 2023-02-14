@@ -11,3 +11,6 @@ vite.config.ts.timestamp-*
 
 # smui
 static/smui*
+
+# vercel builds
+.vercel/
