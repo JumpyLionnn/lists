@@ -39,7 +39,9 @@
             checkedItems = checkedItems;
         }
     }
-    loadListData();
+    $: if (list) {
+        loadListData();
+    }
 
     onMount(() => {
         api.notifier.addListener("item:add", addItem);

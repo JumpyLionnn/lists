@@ -23,13 +23,16 @@
         })).json();
     }
 
-    const membersPromise = getMembers();
+    let membersPromise: Promise<{members: MemberData[]}>;
+    $: if (list) {
+        membersPromise = getMembers();
+        membersPromise
+            .then((data) => {
+                members = data.members;
+            });
+    }
 
     let members: MemberData[] = [];
-    membersPromise
-        .then((data) => {
-            members = data.members;
-        });
     
     function addMember(data: {member: MemberData}){
         members.push(data.member);
