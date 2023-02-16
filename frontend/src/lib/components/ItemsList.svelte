@@ -73,6 +73,12 @@
         itemName = "";
     }
 
+    function onItemInputKeyDown(e: any){
+        if(e.code === "Enter"){
+            onItemAddClicked();
+        }
+    }
+
     function removeItemFromList(list: ItemData[], id: number){
         for (let i = 0; i < list.length; i++) {
             const item = list[i];
@@ -158,7 +164,7 @@
 <RemoveItemDialog bind:this={removeItemDialog} on:remove={onRemoveItem} />
 <div class="h-full flex flex-col">
     <div class="flex items-center gap-4 p-3">
-        <Textfield variant="filled" class="w-full" type="text" bind:value={itemName} label="Item name" />
+        <Textfield variant="filled" class="w-full" type="text" bind:value={itemName} label="Item name" on:keydown={(e) => onItemInputKeyDown(e)} />
         <Button variant="raised" on:click={onItemAddClicked}>
             <Label>Add</Label>
         </Button>

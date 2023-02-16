@@ -51,7 +51,7 @@
     <div class="grow">
         <h2 class="text-center text-xl">Join code: {list.joinCode}</h2>
         <List>
-            {#each members as member, i}
+            {#each members as member}
                 <Item>
                     <Text>{member.username}</Text>
                 </Item>

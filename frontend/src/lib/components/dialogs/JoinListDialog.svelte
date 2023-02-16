@@ -1,7 +1,7 @@
 <script lang="ts">
     import IconButton from "@smui/icon-button";
     import Textfield from "@smui/textfield";
-    import Dialog, { Header, Actions, Title, Content } from '@smui/dialog';
+    import Dialog, { Header, Title, Content } from '@smui/dialog';
     import Button, { Label } from "@smui/button";
     import { createEventDispatcher } from "svelte";
     import * as api from "$lib/api";
