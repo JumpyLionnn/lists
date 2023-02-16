@@ -89,7 +89,7 @@ export function setupCreateListRoute(){
             listId: list.id
         });
 
-        list.creatorId = member.id;
+        list.creatorId = member.userId;
         await list.save();
 
         res.status(201).send({

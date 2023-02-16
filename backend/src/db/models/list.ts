@@ -1,11 +1,12 @@
 import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, BelongsToSetAssociationMixin, CreationOptional, DataTypes, ForeignKey, HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, HasManyGetAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasManySetAssociationsMixin, InferAttributes, InferCreationAttributes, Model, NonAttribute, Sequelize } from "sequelize";
 import { ListItem } from './listItem';
 import { ListMember } from './listMember';
+import { User } from "./user";
 
 export class List extends Model<InferAttributes<List>, InferCreationAttributes<List>> {
     declare public id: CreationOptional<number>;
     declare public name: string;
-    declare public creatorId: CreationOptional<ForeignKey<ListMember["id"]>>;
+    declare public creatorId: CreationOptional<ForeignKey<User["id"]>>;
     declare public joinCode: string;
 
     declare createdAt: CreationOptional<Date>;
@@ -13,9 +14,8 @@ export class List extends Model<InferAttributes<List>, InferCreationAttributes<L
 
     declare creator?: NonAttribute<ListMember>;
 
-    declare getCreator: BelongsToGetAssociationMixin<ListMember>;
-    declare setCreator: BelongsToSetAssociationMixin<ListMember, ListMember["id"]>;
-    declare createCreator: BelongsToCreateAssociationMixin<ListMember>;
+    declare getCreator: BelongsToGetAssociationMixin<User>;
+    declare setCreator: BelongsToSetAssociationMixin<User, User["id"]>;
 
     declare getItems: HasManyGetAssociationsMixin<ListItem>;
     declare addItem: HasManyAddAssociationMixin<ListItem, number>;
