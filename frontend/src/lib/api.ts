@@ -91,21 +91,49 @@ async function del(path: string, options?: PostOptions){
 
 const notifier = new EventEmitter();
 let socket: WebSocket | null = null;
+let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 const loggedIn: Writable<boolean | null> = writable(null);
-loggedIn.subscribe((value) => {
-    if(value){
-        if(socket && (socket.readyState === socket.OPEN || socket.readyState === socket.CONNECTING)){
-            console.warn("logged in state changed to true but socket was already connected");
+function recreateSocket(){
+    if(socket !== null){
+        if(socket.readyState === socket.OPEN || socket.readyState === socket.CONNECTING){
+            console.warn("logged in state changed to true but socket was already connected.");
             return;
         }
-        socket = new WebSocket(socketUrl + "listen");
-        socket.onmessage = (event: MessageEvent) => {
-            const message = JSON.parse(event.data);
-            notifier.emit(message.type, message.data);
-        };
-        socket.onerror = (error) => {
-            console.error(error);
-        };
+        else{
+            socket.close();
+        }
+    }
+    socket = new WebSocket(socketUrl + "listen");
+    socket.onopen = () => {
+        if(reconnectTimeout !== null){
+            clearTimeout(reconnectTimeout);
+            reconnectTimeout = null;
+            notifier.emit("reconnected");
+            console.log("Reconnected successfully!");
+        }
+    }
+    socket.onmessage = (event: MessageEvent) => {
+        const message = JSON.parse(event.data);
+        notifier.emit(message.type, message.data);
+    };
+    socket.onclose = (event: CloseEvent) => {
+        if(event.code !== 1001){
+            console.error("Socket disconnected, making a reconnection attempt in 5 seconds...");
+            reconnectTimeout = setTimeout(() => {
+                if(socket !== null){
+                    socket.close();
+                }
+                recreateSocket();
+            }, 5000);
+        }
+    };
+    socket.onerror = (error) => {
+        console.error("socket error:",error);
+    };
+}
+loggedIn.subscribe((value) => {
+    if(value){
+        recreateSocket();
     }
     else{
         socket?.close();
@@ -115,7 +143,7 @@ loggedIn.subscribe((value) => {
 });
 (async () => {
     loggedIn.set((await (await get("check-auth")).json()).loggedIn);
-})()
+})();
 
 async function login(email: string, password: string){
     if(getStore(loggedIn)){

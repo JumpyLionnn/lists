@@ -9,30 +9,31 @@
 
     onMount(() => {
         api.notifier.on("list:join", addMember);
+        api.notifier.addListener("reconnected", loadMembersData);
     });
 
     onDestroy(() => {
         api.notifier.removeListener("list:join", addMember);
+        api.notifier.removeListener("reconnected", loadMembersData);
     });
 
-    async function getMembers(){
-        return (await api.get("lists/members", {
+    let members: MemberData[] = [];
+    async function loadMembersData(){
+        const res = await api.get("lists/members", {
             query: {
                 listId: list.id
             }
-        })).json();
+        });
+        if(res.ok){
+            const data = await res.json();
+            members = data.members;
+        }
     }
 
-    let membersPromise: Promise<{members: MemberData[]}>;
     $: if (list) {
-        membersPromise = getMembers();
-        membersPromise
-            .then((data) => {
-                members = data.members;
-            });
+        loadMembersData();
     }
 
-    let members: MemberData[] = [];
     
     function addMember(data: {member: MemberData}){
         members.push(data.member);

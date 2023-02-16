@@ -48,6 +48,7 @@
         api.notifier.addListener("item:update", updateItem);
         api.notifier.addListener("item:toggle", toggleItem);
         api.notifier.addListener("item:remove", removeItem);
+        api.notifier.addListener("reconnected", loadListData);
     });
 
     onDestroy(() => {
@@ -55,9 +56,9 @@
         api.notifier.removeListener("item:update", updateItem);
         api.notifier.removeListener("item:toggle", toggleItem);
         api.notifier.removeListener("item:remove", removeItem);
+        api.notifier.removeListener("reconnected", loadListData);
     });
 
-    
 
     async function onItemAddClicked(){
         if(list === null){
@@ -102,8 +103,10 @@
     }
 
     function addItem(data: {item: ItemData}){
+        if(data.item.listId === list.id){
             items.push(data.item);
             items = items;
+        }
     }
 
     let removeItemDialog: RemoveItemDialog;

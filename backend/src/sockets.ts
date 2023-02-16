@@ -33,7 +33,7 @@ class MemberSocket {
         for (const socketId of this.sockets) {
             const socket = sockets.get(socketId);
             if(socket){
-                socket.close();
+                socket.close(1001);
             }
             else{
                 console.warn(`socket id ${socketId} was registered but the socket does not exist.`);
@@ -181,6 +181,7 @@ export function init(server: HttpServer | HttpsServer) {
             else{
                 member!.sockets.delete(socketId);
             }
+            console.log(`Socket ${socketId} disconnected.`);
         });
     });
 }
