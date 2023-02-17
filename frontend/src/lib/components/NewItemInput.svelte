@@ -21,7 +21,6 @@
         errorTimeout = setTimeout(() => {
             errorMessage = "";
             invalid = false;
-            console.log("reset error");
         }, 120 * 1000);
     }
     function clearErrorMessage(){
