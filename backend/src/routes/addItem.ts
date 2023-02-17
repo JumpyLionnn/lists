@@ -16,6 +16,7 @@ export function setupAddItemRoute(){
                 type: "string",
                 minLength: 1,
                 maxLength: 300,
+                transform: ["trim"],
                 errorMessage: "Invalid list item. List items must be 1-300 characters."
             },
             listId: {

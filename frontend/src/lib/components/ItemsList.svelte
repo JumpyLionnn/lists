@@ -1,18 +1,16 @@
 <script lang="ts">
-    import Textfield from "@smui/textfield";
     import Accordion, { Panel, Header, Content as AccordionContent } from '@smui-extra/accordion';
     import List from "@smui/list";
     import * as api from "$lib/api";
-	import Button, { Label } from "@smui/button";
 	import type { ListData, ItemData } from "$lib/models";
 	import { onDestroy, onMount } from "svelte";
 	import ListItem from "$lib/components/ListItem.svelte";
 	import RemoveItemDialog from "$lib/components/dialogs/RemoveItemDialog.svelte";
 	import IconButton, { Icon } from "@smui/icon-button";
+	import NewItemInput from "./NewItemInput.svelte";
 
     export let list: ListData;
 
-    let itemName = "";
     let items: ItemData[] = [];
     let checkedItems: ItemData[] = [];
 
@@ -58,27 +56,6 @@
         api.notifier.removeListener("item:remove", removeItem);
         api.notifier.removeListener("reconnected", loadListData);
     });
-
-
-    async function onItemAddClicked(){
-        if(list === null){
-            console.error("selected list is null while add item clicked!");
-            return;
-        }
-        await api.post("lists/items/create", {
-            body: {
-                listId: list.id,
-                content: itemName
-            }
-        });
-        itemName = "";
-    }
-
-    function onItemInputKeyDown(e: any){
-        if(e.code === "Enter"){
-            onItemAddClicked();
-        }
-    }
 
     function removeItemFromList(list: ItemData[], id: number){
         for (let i = 0; i < list.length; i++) {
@@ -166,12 +143,7 @@
 
 <RemoveItemDialog bind:this={removeItemDialog} on:remove={onRemoveItem} />
 <div class="h-full flex flex-col">
-    <div class="flex items-center gap-4 p-3">
-        <Textfield variant="filled" class="w-full" type="text" bind:value={itemName} label="Item name" on:keydown={(e) => onItemInputKeyDown(e)} />
-        <Button variant="raised" on:click={onItemAddClicked}>
-            <Label>Add</Label>
-        </Button>
-    </div>
+    <NewItemInput list={list} />
     <div class="h-auto grow overflow-auto">
         <List nonInteractive>
             {#each items as item}
