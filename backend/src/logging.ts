@@ -1,4 +1,5 @@
 import * as winston from "winston";
+import { inspect } from "util";
 import { Request, Response } from "express";
 
 export function init(){
@@ -42,19 +43,21 @@ export function init(){
     }
 
     // used for for debugging and troubleshooting
-    console.debug = logger.debug.bind(logger);
+    console.debug = wrapLogFunction(logger.debug.bind(logger));
 
     // used for more detailed information about the operation of the application
-    console.log = logger.verbose.bind(logger);
+    console.log = wrapLogFunction(logger.verbose.bind(logger));
 
     // used for general information about the operation of the application
-    console.info = logger.info.bind(logger);
+    console.info = wrapLogFunction(logger.info.bind(logger));
 
     // used for warnings
-    console.warn = logger.warn.bind(logger);
+    console.warn = wrapLogFunction(logger.warn.bind(logger));
 
     // used for errors
-    console.error = logger.error.bind(logger);
+    console.error = wrapLogFunction(logger.error.bind(logger));
+
+    inspect.styles.string = "white";
 }
 
 export function createRequestLogger(){
@@ -62,4 +65,15 @@ export function createRequestLogger(){
         console.debug(`${req.method} ${req.originalUrl} with ${req.protocol} protocol.`);
         next();
     };
+}
+
+function wrapLogFunction(func: (...data: any[]) => void){
+    return (...data: any[]) => {
+        for (const index in data) {
+            if(typeof data[index] !== "string"){
+                data[index] = inspect(data[index], {depth: 3, colors: true, maxArrayLength: 20, maxStringLength: 1000});
+            }
+        }
+        func(data.join(" "));
+    }
 }
