@@ -60,15 +60,19 @@ export function initListModel(sequelize: Sequelize): void {
         },
         joinCode: {
             allowNull: false,
-            type: DataTypes.STRING(6).BINARY,
-            unique: true
+            type: DataTypes.STRING(6).BINARY
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     },
     {
         deletedAt: false,
-        indexes: [],
+        indexes: [
+            {
+                unique: true, 
+                fields: ["joinCode"]
+            }
+        ],
         sequelize: sequelize,
         tableName: "lists",
     });
