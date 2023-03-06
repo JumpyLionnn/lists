@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {JSONSchemaType, compileSchema} from "validation";
-import { List, ListItem, ListMember } from 'db';
-import { sendMessageToList } from '../sockets';
+import { ListItem, ListMember } from "db";
+import { sendMessageToList } from "sockets";
 
 interface UpdateItemData {
     itemId: number;

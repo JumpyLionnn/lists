@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { List, sequelize } from "db";
+import { List, ListMember } from "db";
 import {JSONSchemaType, compileSchema} from "validation";
-import { ListMember } from '../db/models/listMember';
-import { sendMessageToList } from '../sockets';
+import { sendMessageToList } from 'sockets';
 import { Op } from "sequelize";
 
 interface JoinListData {

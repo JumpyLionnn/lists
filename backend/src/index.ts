@@ -7,7 +7,7 @@ import { init as initDatabase } from "./db";
 import { authRequired, init as initAuthProtector } from "middlewares/auth";
 import assert from 'assert';
 import { setupRoutes } from './routes/index';
-import { init as initWebSockets } from "sockets";
+import initWebSockets from "sockets";
 
 async function main(){
     console.info("Starting the server.");

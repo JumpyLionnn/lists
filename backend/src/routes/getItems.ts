@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { List } from "db";
+import { List, ListMember } from "db";
 import {JSONSchemaType, compileSchema} from "validation";
-import { ListMember } from '../db/models/listMember';
 
 interface GetItemsData {
     listId: string;

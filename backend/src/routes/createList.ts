@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import {JSONSchemaType, compileSchema} from "validation";
-import { List, User } from "db";
-import { ListMember } from '../db/models/listMember';
+import { List, ListMember, User } from "db";
 import * as crypto from "crypto";
 
 interface CreateListData {
