@@ -17,7 +17,7 @@ export async function init(): Promise<void> {
     const port = parseInt(process.env.DATABASE_PORT);
     assert(!isNaN(port), "Cannt connect to the database, DATABASE_PORT is not a number.");
 
-    let logging: boolean | ((sql: string, timing?: number | undefined) => void) = (message: string) => { console.log(`Database: ${message}.`); };
+    let logging: boolean | ((sql: string, timing?: number | undefined) => void) = (message: string) => { console.debug(`Database: ${message}.`); };
     let options: object | undefined;
     let useForeignKeyConstraint: boolean = false;
     if(process.env.NODE_ENV === "production"){
