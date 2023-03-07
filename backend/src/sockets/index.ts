@@ -28,5 +28,5 @@ function init(server: HttpServer | HttpsServer): void {
     wsServer.on("connection", connectionHandler);
 }
 
-export { sendMessageToList, joinListGroup, disconnectMember } from "./operations";
+export { sendMessageToList, joinListGroup, disconnectMember, getMemberStatus } from "./operations";
 export default init;

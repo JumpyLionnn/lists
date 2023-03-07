@@ -12,7 +12,18 @@ export interface ItemData{
     checked: boolean;
 }
 
+// TODO: share enums and interfaces between the server and the client
+export enum Status {
+    Online,
+    Idle,
+    Offline
+};
+
 export interface MemberData{
     userId: number;
     username: string;
+    status: Status;
 }
+
+
+

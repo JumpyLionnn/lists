@@ -1,10 +1,11 @@
 import { List, ListMember } from "db";
 import { IncomingMessage } from "http";
-import { WebSocket } from "ws";
+import { RawData, WebSocket } from "ws";
 import { lists, members, sockets } from "./state";
 import ObjectCollection from "./objectCollection";
 import * as crypto from "crypto";
 import { MemberSocket } from "./memberSocket";
+import { handleAction, onDisconnect, registerMemberStatus } from "./memberStatusRefresher";
 
 async function connectionHandler(socket: WebSocket, request: IncomingMessage, userId: number): Promise<void> {
     const userLists = await List.findAll({
@@ -46,11 +47,18 @@ async function connectionHandler(socket: WebSocket, request: IncomingMessage, us
             lists.set(id, collection);
         }
     }
+    registerMemberStatus(member);
+    socket.on("message", registerMessageHandler(socket, member));
 
     socket.on("close", () => {
-        if (member!.sockets.size === 1) {
+        if(member === undefined){
+            console.error("Socket closed and member is undefined");
+            return;
+        }
+        onDisconnect(member);
+        if (member.sockets.size === 1) {
             // this is the last socket remaining
-            members.delete(member!.userId);
+            members.delete(member.userId);
             for (let i = 0; i < listIds.length; i++) {
                 const id = listIds[i];
                 const collection = lists.get(id)!;
@@ -59,17 +67,41 @@ async function connectionHandler(socket: WebSocket, request: IncomingMessage, us
                     lists.delete(id);
                 }
                 else {
-                    collection.remove(member!.userId);
+                    collection.remove(member.userId);
                 }
             }
         }
         else {
-            member!.sockets.delete(socketId);
+            member.sockets.delete(socketId);
         }
         console.log(`Socket ${socketId} disconnected.`);
     });
 }
 
+function registerMessageHandler(socket: WebSocket, member: MemberSocket): (data: RawData) => void {
+    return (data: RawData) => {
+        if(Array.isArray(data)) {
+            return;
+        }
+        const str = data.toString();
+        let jsonData: unknown;
+        try {
+            jsonData = JSON.parse(str);
+        }
+        catch {
+            return;
+        }
+        if(typeof jsonData === "object" && jsonData !== null && "type" in jsonData && typeof jsonData.type === "string") {
+            switch (jsonData.type) {
+                case "action":
+                    handleAction(member);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+}
 
 function generateSocketUUID(): string {
     let uuid = crypto.randomUUID();

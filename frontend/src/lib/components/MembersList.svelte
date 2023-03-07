@@ -2,19 +2,22 @@
     import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
     import List, {Item, Text} from "@smui/list";
     import * as api from "$lib/api";
-	import type { ListData, MemberData } from "$lib/models";
+	import { Status, type ListData, type MemberData } from "$lib/models";
 	import { onDestroy, onMount } from 'svelte';
 
     export let list: ListData;
 
     onMount(() => {
-        api.notifier.on("list:join", addMember);
+        api.notifier.addListener("list:join", addMember);
+        api.notifier.addListener("status", statusUpdate);
         api.notifier.addListener("reconnected", loadMembersData);
     });
 
     onDestroy(() => {
         api.notifier.removeListener("list:join", addMember);
         api.notifier.removeListener("reconnected", loadMembersData);
+        api.notifier.removeListener("status", statusUpdate);
+
     });
 
     let members: MemberData[] = [];
@@ -39,6 +42,26 @@
         members.push(data.member);
         members = members;
     }
+
+    function statusUpdate(data: {userId: number, status: Status}) {
+        for (let i = 0; i < members.length; i++) {
+            if(members[i].userId === data.userId){
+                members[i].status = data.status;
+                return;
+            }            
+        }
+    }
+
+    function getStatusColor(status: Status): "bg-green-400" | "bg-amber-400" | "bg-gray-400" {
+        switch (status) {
+            case Status.Online:
+                return "bg-green-400";
+            case Status.Idle:
+                return "bg-amber-400";
+            case Status.Offline:
+                return "bg-gray-400";
+        }
+    }
 </script>
 
 <div class="inline-flex flex-col h-full w-full">
@@ -54,7 +77,8 @@
         <List>
             {#each members as member}
                 <Item>
-                    <Text>{member.username}</Text>
+                    <div class="rounded-full transition-colors motion-reduce:transition-none duration-500 {getStatusColor(member.status)} w-2 h-2"></div>
+                    <Text class="ml-2">{member.username}</Text>
                 </Item>
             {/each}
         </List>

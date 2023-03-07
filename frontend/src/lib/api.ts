@@ -141,6 +141,26 @@ loggedIn.subscribe((value) => {
         return;
     }
 });
+
+function sendEvent<T>(event: string, data?: T): void {
+    if(socket && socket.readyState === socket.OPEN) {
+        const eventData: {type: string, data?: T} = {
+            type: event
+        };
+        if(data !== undefined) {
+            eventData["data"] = data;
+        }
+        socket.send(JSON.stringify(eventData));
+    }
+    else {
+        console.warn("Tried to send event but the socket was not connected");
+    }
+}
+
+function isSocketConnected(): boolean {
+    return socket !== null && socket.readyState === socket.OPEN;
+}
+
 (async () => {
     loggedIn.set((await (await get("check-auth")).json()).loggedIn);
 })();
@@ -193,6 +213,8 @@ export {
     del,
     login,
     logout,
+    isSocketConnected,
+    sendEvent,
     loggedIn,
     notifier
 };

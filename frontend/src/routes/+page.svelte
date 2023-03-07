@@ -5,9 +5,11 @@
 	import DesktopListsPage from "$lib/components/desktop/ListsPage.svelte";
 	import MobileListsPage from "$lib/components/mobile/ListsPage.svelte";
 	import Redirect from "$lib/components/Redirect.svelte";
+	import ActionDetector from "$lib/components/ActionDetector.svelte";
 </script>
 
 {#if $loggedIn}
+    <ActionDetector />
     {#if isMobile()}
         <MobileListsPage />
     {:else}

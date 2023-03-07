@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {JSONSchemaType, compileSchema} from "validation";
 import { List, ListMember, User } from "db";
+import { getMemberStatus } from "sockets";
 
 interface GetMembersData {
     listId: string;
@@ -85,7 +86,8 @@ export function setupGetMembersRoute(){
         res.status(200).send({
             members: members.map((member) => ({
                 userId: member.user!.id,
-                username: member.user!.username
+                username: member.user!.username,
+                status: getMemberStatus(member.user!.id)
             }))
         });
         console.log("Members get succeeded.");

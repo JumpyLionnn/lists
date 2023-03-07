@@ -1,8 +1,15 @@
 import { sockets } from "./state";
 
+export enum Status {
+    Online,
+    Idle,
+    Offline
+};
+
 export class MemberSocket {
     public sockets: Set<string>;
     public userId: number;
+    public status: Status = Status.Online;
     public listIds: number[];
 
     constructor(socketId: string, userId: number, listIds: number[]) {
